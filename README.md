@@ -1,15 +1,13 @@
-# finalprojectAI
-Check out groceries at the grocery store using recognition software
 import cv2
 import numpy as np
 from keras.preprocessing.image import img_to_array
 from keras.models import load_model
 import pandas as pd
 
-# Load mô hình nhận diện bánh từ file .h5
+# Load mô hình nhận diện sản phẩm từ file .h5
 model = load_model('myenv/projectAI1.h5')
 
-# Danh sách nhãn của các loại bánh
+# Danh sách nhãn của các loại sản phẩm
 label_list = ['Fami','Milk','Oil','Omo','Soy','Sunlight','bun_an_lien','Chocopie','chocopie_box','cosi_cycle','cosi_oc_que_dua','cosi_oc_que_trung','dove','fish_sauce','lifebuoy','mi_cay','mi_hu','mi_tron','sua_hop','sugar','sunsik']
 
 # Giá của từng loại bánh
@@ -40,21 +38,21 @@ prices = {
 # Biến toàn cục để lưu danh sách các món đồ và số lượng
 items = []
 
-# Hàm nhận diện bánh từ ảnh
+# Hàm nhận diện sản phẩm từ ảnh
 def detect_cake(image):
     # Tiền xử lý ảnh
     image = cv2.resize(image, (224, 224))
     image = img_to_array(image)
     image = np.expand_dims(image, axis=0)
 
-    # Dự đoán bánh từ ảnh
+    # Dự đoán sản phẩm từ ảnh
     result = model.predict(image)
     predicted_label_index = np.argmax(result)
     predicted_label = label_list[predicted_label_index]
     
     return predicted_label
 
-# Hàm tính tổng số tiền dựa trên loại bánh và số lượng
+# Hàm tính tổng số tiền dựa trên loại sản phẩm và số lượng
 def calculate_total_bill():
     total_bill = 0
     for item in items:
@@ -63,7 +61,7 @@ def calculate_total_bill():
             total_bill += prices[cake_name] * quantity
     return total_bill
 
-# Hàm chụp ảnh từ camera và nhận diện bánh
+# Hàm chụp ảnh từ camera và nhận diện sản phẩm
 def detect_and_calculate_bill():
     cap = cv2.VideoCapture(0)
 
@@ -81,7 +79,7 @@ def detect_and_calculate_bill():
         elif cv2.waitKey(1) & 0xFF == ord('s'):
             # Nhận diện món đồ từ frame
             detected_food = detect_cake(frame)
-            print("Nhận diện bánh:", detected_food)
+            print("Nhận diện bánh:", detected_fooqsd)
             quantity = int(input("Nhập số lượng bánh: "))
             items.append((detected_food, quantity))
             
@@ -101,7 +99,7 @@ def detect_and_calculate_bill():
     # Tạo DataFrame từ danh sách các mặt hàng
     df = pd.DataFrame(items, columns=['Loại Bánh', 'Số Lượng'])
     
-    # Tính tổng tiền cho từng loại bánh
+    # Tính tổng tiền cho từng loại sản phẩm
     df['Tổng Tiền'] = df.apply(lambda row: prices[row['Loại Bánh']] * row['Số Lượng'], axis=1)
     
     # Xuất DataFrame vào file Excel
